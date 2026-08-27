@@ -3,14 +3,10 @@ import * as service from '../services/produtosService.js'
 //Função para criar um novo produto - chama a função criar do service
 export async function criar(req, res) {
     try {
-        const { nome, preco } = req.body
-        
-        if (!nome || !preco) {
-            return res.status(400).json({ erro: 'campos nome e preco são obrigatótios' })
-        }
         const id = await service.criar(req.body)
+        res.status(201).json({id, ...req.body})
     } catch (err) {
-        res.status(500).json({ erro: err.message })
+        next(err)
     }
 }
 
@@ -20,7 +16,7 @@ export async function listar(req, res) {
         const produtos = await service.listar()
         res.json(produtos)
     } catch (err) {
-        res.status(500).json({ erro: err.message })
+        next(err)
     }
 }
 
@@ -35,7 +31,7 @@ export async function buscarPorId(req, res) {
         }
         res.json(produto)
     } catch (err) {
-        res.status(500).json({ erro: err.message })
+        next(err)
     }
 }
 
@@ -44,14 +40,18 @@ export async function buscarPorId(req, res) {
 export async function atualizar(req, res) {
     try {
         const { id } = req.params
-        const n = await service.atualizar(id, req.body);
 
-        if (n === 0) {
-            return res.status(404).json({ erro: 'Produto não existe' })
+        const produtoExistente = await service.buscarPorId(id)
+        if(!produtoExistente){
+            return res.status(404).json({err: "Produto nao encontardo"})
         }
-        res.json({ id, ...req.body })
+        await service.atualizar(id, req.body)
+        
+        const  produtoAtualizado = await service.buscarPorId(id)
+        res.json({ produtoAtualizado })
+
     } catch (err) {
-        res.status(500).json({ erro: err.message })
+        next(err)
     }
 }
 
@@ -66,6 +66,6 @@ export async function deletar(req, res) {
         }
         res.status(204).send()
     }catch(err){
-        res.status(500).json({erro: err.message})
+        next(err)
     }
 }

@@ -1,14 +1,14 @@
-import pool from "../config/db";
+import pool from "../config/db.js";
 
+const CAMPOS_PRODUTO = ['nome', 'descricao', 'preco', 'quantidade_estoque', 'categorias_id']
 //função para criar um nivo produto
 export async function criar(produto) {
-    const { nome, preco, categoria_id } = produto;//propiedades de produto
-    const [r] = await pool.query('INSERT INTO produtos (nome,preco,categoria_id)' + 'VALUES(?,?,?)', [nome, preco, categoria_id]);
+    const { nome, descricao, preco, quantidade_estoque, categorias_id } = produto;//propiedades de produto
+    const [r] = await pool.query(' INSERT INTO produtos (nome, descricao, preco, quantidade_estoque, categorias_id) ' +  ' VALUES(?,?,?,?,?)', [nome, descricao ?? null, preco, quantidade_estoque ?? 0, categorias_id]);
     return r.insertId
 }
 
 //função para listar todos os produtos
-
 export async function listar() {
     const [rows] = await pool.query('SELECT * FROM produtos')
     return rows;
@@ -21,11 +21,19 @@ export async function buscarPorId(id) {
 }
 
 //função para atulaizar os dados de um produto
-export async function atualizar(id, produto) {
-    const { nome, descricao, preco, quantidade_estoque, categoria_id } = produto
-    const [r] = await pool.query('UPDATE produtos SET nome=?,descricao=?, preco=?, quantidade_estoque=?, categoria_id=?', [nome, descricao, preco, quantidade_estoque, categoria_id, id])
+export async function atualizar(id, camposAtualizados) {
+   const camposParaAtualizar = Object.keys(camposAtualizados).filter((campo) => CAMPOS_PRODUTO.includes(campo))
 
-    return r.affectedRows;
+   const setClause = camposParaAtualizar.map((campo) => `${campo} = ?`).join(', ')
+
+   const valores = camposParaAtualizar.map((campo) => camposAtualizados[campo]);
+
+   const [r] = await pool.query(
+    `UPDATE produtos set ${setClause} WHERE id =?`,
+    [...valores, id] // o .. espalha o conteudo do array valores
+   )
+
+   return r.affectedRows;
 }
 
 //função para excluir um produto
