@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import produtosRoutes from './routes/protudosRoutes.js'
+import categoriasRoutes from './routes/categoriasRoutes.js'
 
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.json());
 app.get('/health', (req, res) => res.json({status: 'OK'}))
 
 app.use('/api/v1/stockapi', produtosRoutes)
+app.use('/api/v1/stockapi', categoriasRoutes)
 
 app.use((req, res) => {
     res.status(404).json({erro: `Rota ${req.method} ${req.originalUrl} não encontrada!`})
