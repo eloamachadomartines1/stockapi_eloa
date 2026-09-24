@@ -1,4 +1,8 @@
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 import * as service from '../services/usuariosService.js'
+
+
 
 //função que cria um usuario
 export async function registrar(req, res, next) {
@@ -24,7 +28,7 @@ export async function login(req, res, next) {
         const ok = await bcrypt.compare(
             senha, usuario.senha_hash
         );
-        
+
         if (!ok) {
             return res.status(401).json({ erro: 'invalido' });
         }
