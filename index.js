@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.get('/health', (req, res) => res.json({status: 'OK'}))
 
-app.use('/api/v1/stockapi', produtosRoutes)
+app.use('/api/v1/stockapi', produtosRoutes) //http://localhost:3000/api/v1/stockapi
 app.use('/api/v1/stockapi', categoriasRoutes)
 app.use('/api/v1/stockapi', usuariosRoutes)
 
