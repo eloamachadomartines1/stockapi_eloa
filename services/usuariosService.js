@@ -1,3 +1,7 @@
+import bcrypt from 'bcrypt'
+import pool from "../config/db.js";
+
+
 export async function criar(usuario) {
     const { nome, email, senha } = usuario;
     const senha_hash = await bcrypt.hash(senha, 10);

@@ -4,7 +4,8 @@ import * as controller from '../controllers/usuariosController.js'
 
 const router = express.Router()
 
-router.post('/usuarios', controller.registrar);
+router.post('/usuarios/registro', controller.registrar);
+router.post('/usuarios/login', controller.login)
 
 
 export default router;
